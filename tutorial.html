@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>MSNA Tutorial: Analysing Random Samples</title>
+
+<script src="tutorial_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="tutorial_files/bootstrap-3.3.5/css/readable.min.css" rel="stylesheet" />
+<script src="tutorial_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="tutorial_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="tutorial_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="tutorial_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="tutorial_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="tutorial_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="tutorial_files/navigation-1.1/tabsets.js"></script>
+<link href="tutorial_files/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="tutorial_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">MSNA Tutorial: Analysing Random Samples</h1>
+
+</div>
+
+
+<style>
+.section {
+margin:5px;
+margin-left:5px;
+padding:5px;
+background-color:rgba(0,0,0,.05)
+}
+</style>
+<div id="setting-up-your-r-project" class="section level1">
+<h1>Setting up your R project</h1>
+<ol style="list-style-type: decimal">
+<li><p>In RStudio, hit file -&gt; new Project and set up a new project. (<a href="https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects">details</a>)</p></li>
+<li><p>Set up folder structure There should be one folder for all input files, and one folder for all output files.</p></li>
+<li>Core files
+<ol style="list-style-type: decimal">
+<li><em>setup.R</em> : package installation can go inside it’s own script</li>
+<li><em>main.Rmd</em> : your analysis should preferably happen in an RMarkdown file. (file -&gt; new -&gt; RMarkdown… -&gt; html)</li>
+<li><em>utils.R</em> : if your analysis becomes long / more complicated, write functions and place them in a separate file that you can <code>source()</code> and then call in your main script.</li>
+</ol></li>
+</ol>
+<blockquote>
+<p><strong>Why Use RProjects, RMarkdown etc.?</strong> This is essential on order to make your project reproducible and self contained</p>
+<ol style="list-style-type: decimal">
+<li><p>Without using an RProject, scripts will depend on your local file paths etc. With RProjects there is no more “setwd()” and all paths can be relative to the project root folder, since an RProject always opens with the project folder as the working directory</p></li>
+<li><p>Without RMarkdown, your script depends on your current <em>environment</em>, so it might work now because you have some objects in your global space, but if you open R tomorrow it will stop working. RMarkdown is always executed in its own clean environment, so when you hit “knit” and it works, you know it will work tomorrow / for someone else too.</p></li>
+</ol>
+</blockquote>
+</div>
+<div id="prepare-your-inputs" class="section level1">
+<h1>Prepare your Inputs</h1>
+<p>At the very least, you need your data, your kobo questionnaire (questions and choices) and an analysisplan. If the sample is stratified / weighted, you will also need your sampling frame. Best is to have all these as csv files. We have prepared these for this tutorial, you will find them in “./resources/data”.</p>
+<p>All inputs need to be provided in <em>standard kobo format.</em> Often minor changes to the dataset / kobo questionnaire structure and/or format happen during preliminary data processing / cleaning. It is advised to advise anyone handling the data prior to the analysis to strictly leave the data format including column headers exactly as they are. IMPACT has developed the “kobostandards” R package that will help you identify inconsistencies between the various inputs.</p>
+<ol style="list-style-type: decimal">
+<li>Copy the input files into the input files folder in your RProject directory (as created above)</li>
+<li>Use the instructions in <a href="./resources/getting_started_with_impact_tools.html" class="uri">./resources/getting_started_with_impact_tools.html</a> to install the “kobostandards” package from Github</li>
+<li>In you <code>main.Rmd</code>
+<ol style="list-style-type: decimal">
+<li>load the “kobostandards” package</li>
+<li>load all your input files (we recommend the data.table::fread function for this)</li>
+<li>use <code>kobostandards::check_inputs()</code> to identify inconsistencies in your input data. If the package has been installed correctly, details on this can be found via <code>?kobostandards::check_inputs</code> and <code>browseVignettes(&quot;kobostandards&quot;)</code>.</li>
+<li>You can print the outputs into the RMarkdown with <code>knitr::kable()</code>, or save them to a csv file.</li>
+<li>if any inconsistencies are “critical”, see if you can resolve them. If you have no long term experience with kobo/odk, you may want to check with the data unit for support on deciding which issues need to be resolved and how best to go about it.</li>
+</ol></li>
+</ol>
+</div>
+<div id="horizontal-operations" class="section level1">
+<h1>Horizontal operations</h1>
+<p>Before aggregation, you will usually need to add new variables to the dataset that are created horizontally from other variables.</p>
+<ol style="list-style-type: decimal">
+<li>Use <code>dplyr::mutate</code> and <code>forcats::fct_collapse()</code> to add new variables to your data</li>
+</ol>
+</div>
+<div id="default-analysis" class="section level1">
+<h1>Default Analysis</h1>
+<ol style="list-style-type: decimal">
+<li>Conduct your analysis using the hypegrammaR package. Install the hypegrammaR package (see <a href="./resources/getting_started_with_impact_tools.html" class="uri">./resources/getting_started_with_impact_tools.html</a>)</li>
+<li>have a close look at “./resources/analysisplan.csv”. How is it structured?</li>
+<li>Create a new row for the analysisplan</li>
+<li>use the “apply data analysisplan” vignette of the hypegrammaR package to conduct your analysis</li>
+</ol>
+</div>
+<div id="custom-analysis" class="section level1">
+<h1>Custom Analysis</h1>
+<ol style="list-style-type: decimal">
+<li>check out the <code>grammar of hypothesis</code> vignette of the hypegrammaR package</li>
+<li>make a custom analysis</li>
+</ol>
+</div>
+<div id="internal-workings" class="section level1">
+<h1>internal workings</h1>
+<ol style="list-style-type: decimal">
+<li>run the commands <code>map_to_result</code>, <code>map_to_summary_statistic</code> (without brackets). What do they do?</li>
+</ol>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

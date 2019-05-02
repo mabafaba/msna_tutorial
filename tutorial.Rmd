@@ -1,0 +1,98 @@
+---
+title: "MSNA Tutorial: Analysing Random Samples"
+output:
+  html_document:
+    self_contained: false
+    theme: readable
+    highlight: textmate
+    toc: true
+    toc_depth: 2
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<style>
+.section {
+margin:5px;
+margin-left:5px;
+padding:5px;
+background-color:rgba(0,0,0,.05)
+}
+</style>
+
+# Setting up your R project
+
+1. In RStudio, hit file -> new Project and set up a new project. ([details](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects))
+
+1. Set up folder structure
+There should be one folder for all input files, and one folder for all output files.
+
+1. Core files
+    1. *setup.R* : package installation can go inside it's own script
+    1. *main.Rmd* : your analysis should preferably happen in an RMarkdown file. (file -> new -> RMarkdown... -> html)
+    1. *utils.R* : if your analysis becomes long / more complicated, write functions and place them in a separate file that you can `source()` and then call in your main script.
+
+> **Why Use RProjects, RMarkdown etc.?**
+> This is essential on order to make your project reproducible and self contained
+>
+> 1. Without using an RProject, scripts will depend on your local file paths etc. With RProjects there is no more "setwd()" and all paths can be relative to the project root folder, since an RProject always opens with the project folder as the working directory
+>
+> 2. Without RMarkdown, your script depends on your current _environment_, so it might work now because you have some objects in your global space, but if you open R tomorrow it will stop working. RMarkdown is always executed in its own clean environment, so when you hit "knit" and it works, you know it will work tomorrow / for someone else too.
+
+
+# Prepare your Inputs
+
+At the very least, you need your data, your kobo questionnaire (questions and choices) and an analysisplan.
+If the sample is stratified / weighted, you will also need your sampling frame.
+Best is to have all these as csv files. We have prepared these for this tutorial, you will find them in "./resources/data".
+
+All inputs need to be provided in _standard kobo format._ Often minor changes to the dataset / kobo questionnaire structure and/or format happen during preliminary data processing / cleaning. It is advised to advise anyone handling the data prior to the analysis to strictly leave the data format including column headers exactly as they are. IMPACT has developed the "kobostandards" R package that will help you identify inconsistencies between the various inputs.
+
+
+1. Copy the input files into the input files folder in your RProject directory (as created above)
+1. Use the instructions in [./resources/getting_started_with_impact_tools.html](./resources/getting_started_with_impact_tools.html) to install the "kobostandards" package from Github
+1. In you `main.Rmd`
+    1. load the "kobostandards" package
+    1. load all your input files (we recommend the data.table::fread function for this)
+    1. use `kobostandards::check_inputs()` to identify inconsistencies in your input data. If the package has been installed correctly, details on this can be found via `?kobostandards::check_inputs` and `browseVignettes("kobostandards")`.
+    1. You can print the outputs into the RMarkdown with `knitr::kable()`, or save them to a csv file.
+    1. if any inconsistencies are "critical", see if you can resolve them. If you have no long term experience with kobo/odk, you may want to check with the data unit for support on deciding which issues need to be resolved and how best to go about it.
+  
+
+   
+   
+# Horizontal operations
+
+Before aggregation, you will usually need to add new variables to the dataset that are created horizontally from other variables.
+
+1. Use `dplyr::mutate` and `forcats::fct_collapse()` to add new variables to your data
+
+
+# Default Analysis
+
+1. Conduct your analysis using the hypegrammaR package. Install the hypegrammaR package (see  [./resources/getting_started_with_impact_tools.html](./resources/getting_started_with_impact_tools.html))
+1. have a close look at "./resources/analysisplan.csv". How is it structured?
+1. Create a  new row for the analysisplan
+1. use the "apply data analysisplan" vignette of the hypegrammaR package to conduct your analysis
+
+
+# Custom Analysis
+
+1. check out the `grammar of hypothesis` vignette of the hypegrammaR package
+1. make a custom analysis
+
+# internal workings
+
+
+1. run the commands `map_to_result`, `map_to_summary_statistic` (without brackets). What do they do?
+
+
+
+
+
+
+
+
+
